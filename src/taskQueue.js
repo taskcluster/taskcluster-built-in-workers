@@ -2,11 +2,11 @@ const iterate = require('taskcluster-lib-iterate');
 const assert = require('assert');
 class TaskQueue {
     constructor(cfg) {
-        assert(cfg.workerId, 'Worker ID is required');
-        assert(cfg.workerType, 'Worker type is required');
-        assert(cfg.workerGroup, 'Worker group is required');
-        assert(cfg.provisionerId, 'Provisioner ID is required');
-        assert(cfg.queue, 'Instance of taskcluster queue is required');
+        assert(cfg.worker.workerId, 'Worker ID is required');
+        assert(cfg.worker.workerType, 'Worker type is required');
+        assert(cfg.worker.workerGroup, 'Worker group is required');
+        assert(cfg.worker.provisionerId, 'Provisioner ID is required');
+        assert(cfg.worker.queue, 'Instance of taskcluster queue is required');
         this.queues = null;
         this.queue = cfg.worker.queue;
         this.workerType = cfg.worker.workerType;
