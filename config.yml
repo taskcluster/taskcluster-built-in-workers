@@ -12,6 +12,13 @@ defaults:
   monitoring:
     enable: !env:bool MONITORING_ENABLE
 
+  worker:
+    workerId: 
+    workerType: "fail"
+    workerGroup: "garbage-hybrid1999"
+    provisionerId: "garbage-hybrid1999"
+    queue: 
+
 test:
   app:
     publishMetaData: false
