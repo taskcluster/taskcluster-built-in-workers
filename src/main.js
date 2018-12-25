@@ -39,16 +39,14 @@ const load = loader({
   },
 
   server: {
-    requires: ['cfg', 'docs'],
+    requires: ['cfg', 'docs','taskqueue'],
     setup: ({cfg, docs}) => {
       console.log('Hello, world.');
     },
   },
   taskqueue:{
      requires: ['cfg'],
-     setup: ({cfg}) => new taskqueue.TaskQueue({
-      cfg
-     }),
+     setup: ({cfg}) => new taskqueue.TaskQueue(cfg),
   },
 }, ['process', 'profile']);
 
