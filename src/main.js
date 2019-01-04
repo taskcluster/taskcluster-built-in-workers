@@ -23,6 +23,14 @@ const load = loader({
     }),
   },
 
+  queue: {
+    requires: ['cfg'],
+    setup: ({cfg}) => new taskcluster.Queue({
+      rootUrl: cfg.taskcluster.rootUrl,
+      credentials: cfg.taskcluster.credentials,
+    }),
+  },
+
   docs: {
     requires: ['cfg'],
     setup: ({cfg}) => docs.documenter({
@@ -39,14 +47,14 @@ const load = loader({
   },
 
   server: {
-    requires: ['cfg', 'docs','taskqueue'],
+    requires: ['cfg', 'docs', 'taskqueue'],
     setup: ({cfg, docs}) => {
       console.log('Hello, world.');
     },
   },
   taskqueue:{
-     requires: ['cfg'],
-     setup: ({cfg}) => new taskqueue.TaskQueue(cfg),
+    requires: ['cfg', 'queue'],
+    setup: ({cfg}) => new taskqueue.TaskQueue(cfg),
   },
 }, ['process', 'profile']);
 
@@ -60,8 +68,5 @@ if (!module.parent) {
     process.exit(1);
   });
 }
-
-
-
 // Export load for tests
 module.exports = load;
