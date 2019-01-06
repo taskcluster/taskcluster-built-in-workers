@@ -75,6 +75,12 @@ const stubbedQueue = () => {
         assert(task, `fake queue has no task ${taskId}`);
         return task;
       },
+      reportCompleted : async (taskId, runId) => {
+        return queue.reportCompleted(taskId, runId);
+      },
+      claimWork: async (provisionerId, workerType, payload) => {
+        return queue.claimWork(provisionerId, workerType, payload);
+      },
     },
   });
 

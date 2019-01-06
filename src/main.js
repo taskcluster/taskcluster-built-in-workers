@@ -54,7 +54,7 @@ const load = loader({
   },
   taskqueue:{
     requires: ['cfg', 'queue'],
-    setup: ({cfg}) => new taskqueue.TaskQueue(cfg),
+    setup: ({cfg, queue}) => new taskqueue.TaskQueue(cfg, queue),
   },
 }, ['process', 'profile']);
 

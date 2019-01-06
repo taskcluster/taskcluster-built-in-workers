@@ -29,7 +29,7 @@ helper.secrets.mockSuite('taskQueue_test.js', ['taskcluster'], function(mock, sk
     const taskId = slugid.v4();
     const task = makeTask();
     helper.queue.createTask(taskId, task);
-    const tq = await helper.load('server');
+    const tq = await helper.load('taskqueue');
     const res = await tq.claimTasks();
   });
 });
