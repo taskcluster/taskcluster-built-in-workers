@@ -46,12 +46,10 @@ const load = loader({
     setup: ({docs}) => docs.write({docsDir: process.env['DOCS_OUTPUT_DIR']}),
   },
 
-  server: {
-    requires: ['cfg', 'docs', 'taskqueue'],
-    setup: ({cfg, docs}) => {
-      console.log('Hello, world.');
-    },
-  },
+  // worker:{
+  //   requires: ['taskqueue'],
+  //   // setup: () => 
+  // }
   taskqueue:{
     requires: ['cfg', 'queue'],
     setup: ({cfg, queue}) => new taskqueue.TaskQueue(cfg, queue),

@@ -14,6 +14,12 @@ class TaskQueue {
     this.workerGroup = cfg.worker.workerGroup;
     this.workerId = cfg.worker.workerId;
   }
+  async startWorker() {
+
+    while (true) {
+      var res = await this.claimTasks();
+    }
+  }
 
   async claimTasks() {
     var capacity = 1;
@@ -53,3 +59,20 @@ class TaskQueue {
   }
 }
 exports.TaskQueue = TaskQueue;
+/*var resp = {
+          tasks: {
+            status: {
+              taskId:slugid.v4(),
+            },
+            runId:0,
+            workerGroup:payload.workerGroup,
+            workerId:payload.workerId,
+            task: {
+              provisionerId:provisionerId,
+              workerType:workerType,
+              payload:{},
+            },
+          },
+        };
+        return resp;
+        */

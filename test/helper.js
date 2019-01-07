@@ -64,6 +64,10 @@ exports.withWorker = (mock, skipping) => {
  */
 const stubbedQueue = () => {
   const tasks = {};
+  // responses from claimWork
+  exports.claimableWork = [];
+  // {taskId: resolution}
+  exports.taskResolutions = {};
   const queue = new taskcluster.Queue({
     rootUrl: helper.rootUrl,
     credentials:      {
@@ -76,38 +80,20 @@ const stubbedQueue = () => {
         assert(task, `fake queue has no task ${taskId}`);
         return task;
       },
-      reportCompleted: async (taskId, runId) => {
-        var result = 'reported as Completed';
-        console.log(result);
-        return  result;
-      },
       claimWork: async (provisionerId, workerType, payload) => {
-        var resp = {
-          tasks: {
-            status: {
-              taskId:slugid.v4(),
-            },
-            runId:0,
-            workerGroup:payload.workerGroup,
-            workerId:payload.workerId,
-            task: {
-              provisionerId:provisionerId,
-              workerType:workerType,
-              payload:{},
-            },
-          },
-        };
-        return resp;
+        return exports.claimableWork.pop();
       },
-      reportException: async (taskId, runId, payload) => {
-        var result = 'malformed Payload';
-        console.log(result);
-        return  result;
+      reportCompleted: async (taskId, runId) => {
+        exports.taskResolutions[taskId] = {completed: true};
+        return {};
       },
       reportFailed: async (taskId, runId) => {
-        var result = 'reported as Failed';
-        console.log(result);
-        return  result;
+        exports.taskResolutions[taskId] = {failed: true};
+        return {};
+      },
+      reportException: async (taskId, runId, payload) => {
+        exports.taskResolutions[taskId] = {exception: payload};
+        return {};
       },
     },
   });

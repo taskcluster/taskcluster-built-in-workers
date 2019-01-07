@@ -27,6 +27,22 @@ helper.secrets.mockSuite('taskQueue_test.js', ['taskcluster'], function(mock, sk
 
   test('Run task and test indexing', async function() {
     const tq = await helper.load('taskqueue');
-    const res = await tq.claimTasks();
+    helper.claimableWork.push({
+      tasks: {
+        status: {
+          taskId:0,
+        },
+        runId:0,
+        workerGroup:'garbage-hybrid1999',
+        workerId:'succeed',
+        task: {
+          provisionerId: 'garbage-hybrid1999',
+          workerType:'succeed',
+          payload:{},
+        },
+      },
+    });
+    await tq.claimTasks();
+    assert.deepEqual(helper.taskResolutions[0], {completed: true});
   });
 });
