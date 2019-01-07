@@ -76,8 +76,10 @@ const stubbedQueue = () => {
         assert(task, `fake queue has no task ${taskId}`);
         return task;
       },
-      reportCompleted : async (taskId, runId) => {
-        return queue.reportCompleted(taskId, runId);
+      reportCompleted: async (taskId, runId) => {
+        var result = 'reported as Completed';
+        console.log(result);
+        return  result;
       },
       claimWork: async (provisionerId, workerType, payload) => {
         var resp = {
@@ -85,7 +87,7 @@ const stubbedQueue = () => {
             status: {
               taskId:slugid.v4(),
             },
-            runId:slugid.v4(),
+            runId:0,
             workerGroup:payload.workerGroup,
             workerId:payload.workerId,
             task: {
@@ -96,6 +98,16 @@ const stubbedQueue = () => {
           },
         };
         return resp;
+      },
+      reportException: async (taskId, runId, payload) => {
+        var result = 'malformed Payload';
+        console.log(result);
+        return  result;
+      },
+      reportFailed: async (taskId, runId) => {
+        var result = 'reported as Failed';
+        console.log(result);
+        return  result;
       },
     },
   });

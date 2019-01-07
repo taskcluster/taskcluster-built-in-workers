@@ -18,7 +18,7 @@ helper.secrets.mockSuite('taskQueue_test.js', ['taskcluster'], function(mock, sk
       created: (new Date()).toJSON(),
       deadline: (new Date()).toJSON(),
       expires: taskcluster.fromNow('1 day'),
-      payload: {},
+      payload: {nigga:1},
       tags: {
         objective: 'Test task indexing',
       },
@@ -26,9 +26,6 @@ helper.secrets.mockSuite('taskQueue_test.js', ['taskcluster'], function(mock, sk
   };
 
   test('Run task and test indexing', async function() {
-    const taskId = slugid.v4();
-    const task = makeTask();
-    helper.queue.createTask(taskId, task);
     const tq = await helper.load('taskqueue');
     const res = await tq.claimTasks();
   });

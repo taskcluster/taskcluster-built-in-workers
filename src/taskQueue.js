@@ -1,5 +1,6 @@
 const iterate = require('taskcluster-lib-iterate');
 const assert = require('assert');
+const _ = require('lodash');
 class TaskQueue {
   constructor(cfg, queue) {
     console.log(cfg);
@@ -17,23 +18,21 @@ class TaskQueue {
 
   async claimTasks() {
     var capacity = 1;
-    // try {
-    let response = await this.queue.claimWork(this.provisionerId, this.workerType, {
+    let result = await this.queue.claimWork(this.provisionerId, this.workerType, {
       tasks: capacity,
       workerGroup: this.workerGroup,
       workerId: this.workerId,
-      // });
-    // } catch (error) {
-    //   console.log('error occured: ', error);
     });
-    if (result.tasks.task.payload.length === 0) {
+    console.log('result of claimWork\n', result);
+    let stat = '';
+    if (_.isEmpty(result.tasks.task.payload)) {
       if (result.tasks.task.workerType === 'suceed') {
-        let stat = await successResolver(result);
+        stat = await this.successResolver(result);
       } else if (result.tasks.task.workerType === 'fail') {
-        let stat = await failureResolver(result);
+        stat = await this.failureResolver(result);
       }
     } else {
-      let stat = await malformedPayload(result);
+      stat = await this.malformedPayload(result);
     }
     return stat;
   }
@@ -47,7 +46,7 @@ class TaskQueue {
     return reportfailure;
   }
   async malformedPayload(result) {
-    payload = {
+    var payload = {
       reason: 'malformed-payload',
     };
     let reportmp = await this.queue.reportException(result.tasks.status.taskId, result.tasks.runId, payload);
