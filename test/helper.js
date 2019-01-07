@@ -2,6 +2,7 @@ const assert = require('assert');
 const _ = require('lodash');
 const taskcluster = require('taskcluster-client');
 const load = require('../src/main');
+const slugid = require('slugid');
 const worker = require('../src/taskQueue.js');
 const libUrls = require('taskcluster-lib-urls');
 const {fakeauth, stickyLoader, Secrets} = require('taskcluster-lib-testing');
@@ -79,7 +80,22 @@ const stubbedQueue = () => {
         return queue.reportCompleted(taskId, runId);
       },
       claimWork: async (provisionerId, workerType, payload) => {
-        return queue.claimWork(provisionerId, workerType, payload);
+        var resp = {
+          tasks: {
+            status: {
+              taskId:slugid.v4(),
+            },
+            runId:slugid.v4(),
+            workerGroup:payload.workerGroup,
+            workerId:payload.workerId,
+            task: {
+              provisionerId:provisionerId,
+              workerType:workerType,
+              payload:{},
+            },
+          },
+        };
+        return resp;
       },
     },
   });

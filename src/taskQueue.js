@@ -2,7 +2,7 @@ const iterate = require('taskcluster-lib-iterate');
 const assert = require('assert');
 class TaskQueue {
   constructor(cfg, queue) {
-    console.log(cfg.worker.workerId);
+    console.log(cfg);
     assert(cfg.worker.workerId, 'Worker ID is required');
     assert(cfg.worker.workerType, 'Worker type is required');
     assert(cfg.worker.workerGroup, 'Worker group is required');
@@ -13,20 +13,19 @@ class TaskQueue {
     this.provisionerId = cfg.worker.provisionerId;
     this.workerGroup = cfg.worker.workerGroup;
     this.workerId = cfg.worker.workerId;
-    this.client = cfg.worker.queue;
   }
 
   async claimTasks() {
     var capacity = 1;
-    try {
-      let result = await this.queue.claimWork(this.provisionerId, this.workerType, {
-        tasks: capacity,
-        workerGroup: this.workerGroup,
-        workerId: this.workerId,
-      });
-    } catch (error) {
-      console.log('error occured: ', error);
-    }
+    // try {
+    let response = await this.queue.claimWork(this.provisionerId, this.workerType, {
+      tasks: capacity,
+      workerGroup: this.workerGroup,
+      workerId: this.workerId,
+      // });
+    // } catch (error) {
+    //   console.log('error occured: ', error);
+    });
     if (result.tasks.task.payload.length === 0) {
       if (result.tasks.task.workerType === 'suceed') {
         let stat = await successResolver(result);
