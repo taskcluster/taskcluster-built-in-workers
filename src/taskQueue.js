@@ -3,7 +3,6 @@ const assert = require('assert');
 const _ = require('lodash');
 class TaskQueue {
   constructor(cfg, queue) {
-    console.log(cfg);
     assert(cfg.worker.workerId, 'Worker ID is required');
     assert(cfg.worker.workerType, 'Worker type is required');
     assert(cfg.worker.workerGroup, 'Worker group is required');
@@ -26,7 +25,7 @@ class TaskQueue {
     console.log('result of claimWork\n', result);
     let stat = '';
     if (_.isEmpty(result.tasks.task.payload)) {
-      if (result.tasks.task.workerType === 'suceed') {
+      if (result.tasks.task.workerType === 'succeed') {
         stat = await this.successResolver(result);
       } else if (result.tasks.task.workerType === 'fail') {
         stat = await this.failureResolver(result);
