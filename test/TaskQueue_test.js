@@ -7,7 +7,7 @@ const request = require('superagent');
 const assume = require('assume');
 const libUrls = require('taskcluster-lib-urls');
 
-helper.secrets.mockSuite('taskQueue_test.js', ['taskcluster'], function(mock, skipping) {
+helper.secrets.mockSuite('TaskQueue_test.js', ['taskcluster'], function(mock, skipping) {
   helper.withFakeQueue(mock, skipping);
   const makeTask = function() {
     return {
@@ -83,6 +83,5 @@ helper.secrets.mockSuite('taskQueue_test.js', ['taskcluster'], function(mock, sk
     });
     await tq.claimTasks();
     assert.deepEqual(helper.taskResolutions[2], {exception: expectedPayload});
-    console.log(helper.taskResolutions);
   });
 });

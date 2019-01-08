@@ -3,7 +3,7 @@ const _ = require('lodash');
 const taskcluster = require('taskcluster-client');
 const load = require('../src/main');
 const slugid = require('slugid');
-const worker = require('../src/taskQueue.js');
+const worker = require('../src/TaskQueue.js');
 const libUrls = require('taskcluster-lib-urls');
 const {fakeauth, stickyLoader, Secrets} = require('taskcluster-lib-testing');
 

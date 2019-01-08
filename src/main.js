@@ -3,7 +3,7 @@ const monitor = require('taskcluster-lib-monitor');
 const docs = require('taskcluster-lib-docs');
 const taskcluster = require('taskcluster-client');
 const config = require('typed-env-config');
-const taskqueue = require('./taskQueue');
+const taskqueue = require('./TaskQueue');
 
 const load = loader({
   cfg: {
