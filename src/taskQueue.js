@@ -28,7 +28,6 @@ class TaskQueue {
       workerGroup: this.workerGroup,
       workerId: this.workerId,
     });
-    console.log('result of claimWork\n', result);
     let stat = '';
     if (_.isEmpty(result.tasks.task.payload)) {
       if (result.tasks.task.workerType === 'succeed') {
