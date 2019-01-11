@@ -1,6 +1,5 @@
 const iterate = require('taskcluster-lib-iterate');
 const assert = require('assert');
-const _ = require('lodash');
 class TaskQueue {
   constructor(cfg, queue) {
     assert(cfg.worker.workerId, 'Worker ID is required');
