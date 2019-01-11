@@ -17,61 +17,34 @@ class TaskQueue {
   async startWorker() {
 
     while (true) {
-      var res = await this.claimTasks();
+      await this.claimTasks();
     }
   }
 
   async claimTasks() {
-    var capacity = 1;
+    let capacity = 1;
     let result = await this.queue.claimWork(this.provisionerId, this.workerType, {
       tasks: capacity,
       workerGroup: this.workerGroup,
       workerId: this.workerId,
     });
     let stat = '';
-    if (_.isEmpty(result.tasks.task.payload)) {
+    if (Object.keys(result.tasks.task.payload).length===0) {
       if (result.tasks.task.workerType === 'succeed') {
-        stat = await this.successResolver(result);
+        let reportsuccess = await this.queue.reportCompleted(result.tasks.status.taskId, result.tasks.runId);
+        return reportsuccess;
       } else if (result.tasks.task.workerType === 'fail') {
-        stat = await this.failureResolver(result);
+        let reportfailure =  await this.queue.reportFailed(result.tasks.status.taskId, result.tasks.runId);
+        return reportfailure;
       }
     } else {
-      stat = await this.malformedPayload(result);
+      var payload = {
+        reason: 'malformed-payload',
+      };
+      let reportmp = await this.queue.reportException(result.tasks.status.taskId, result.tasks.runId, payload);
+      return reportmp;
     }
     return stat;
   }
-
-  async successResolver(result) {
-    let reportsuccess = await this.queue.reportCompleted(result.tasks.status.taskId, result.tasks.runId);
-    return reportsuccess;
-  }
-  async failureResolver(result) {
-    let reportfailure =  await this.queue.reportFailed(result.tasks.status.taskId, result.tasks.runId);
-    return reportfailure;
-  }
-  async malformedPayload(result) {
-    var payload = {
-      reason: 'malformed-payload',
-    };
-    let reportmp = await this.queue.reportException(result.tasks.status.taskId, result.tasks.runId, payload);
-    return reportmp;
-  }
 }
 exports.TaskQueue = TaskQueue;
-/*var resp = {
-          tasks: {
-            status: {
-              taskId:slugid.v4(),
-            },
-            runId:0,
-            workerGroup:payload.workerGroup,
-            workerId:payload.workerId,
-            task: {
-              provisionerId:provisionerId,
-              workerType:workerType,
-              payload:{},
-            },
-          },
-        };
-        return resp;
-        */
