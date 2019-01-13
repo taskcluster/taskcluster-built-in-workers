@@ -21,29 +21,24 @@ class TaskQueue {
   }
 
   async claimTasks() {
-    let capacity = 1;
     let result = await this.queue.claimWork(this.provisionerId, this.workerType, {
-      tasks: capacity,
+      tasks: 1,
       workerGroup: this.workerGroup,
       workerId: this.workerId,
     });
     let stat = '';
     if (Object.keys(result.tasks.task.payload).length===0) {
       if (result.tasks.task.workerType === 'succeed') {
-        let reportsuccess = await this.queue.reportCompleted(result.tasks.status.taskId, result.tasks.runId);
-        return reportsuccess;
+        return await this.queue.reportCompleted(result.tasks.status.taskId, result.tasks.runId);
       } else if (result.tasks.task.workerType === 'fail') {
-        let reportfailure =  await this.queue.reportFailed(result.tasks.status.taskId, result.tasks.runId);
-        return reportfailure;
+        return await this.queue.reportFailed(result.tasks.status.taskId, result.tasks.runId);
       }
     } else {
       var payload = {
         reason: 'malformed-payload',
       };
-      let reportmp = await this.queue.reportException(result.tasks.status.taskId, result.tasks.runId, payload);
-      return reportmp;
+      return await this.queue.reportException(result.tasks.status.taskId, result.tasks.runId, payload);
     }
-    return stat;
   }
 }
 exports.TaskQueue = TaskQueue;

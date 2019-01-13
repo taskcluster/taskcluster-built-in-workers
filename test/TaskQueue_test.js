@@ -9,21 +9,6 @@ const libUrls = require('taskcluster-lib-urls');
 
 helper.secrets.mockSuite('TaskQueue_test.js', ['taskcluster'], function(mock, skipping) {
   helper.withFakeQueue(mock, skipping);
-  const makeTask = function() {
-    return {
-      provisionerId: 'garbage-hybrid1999',
-      workerType: 'fail',
-      scopes: [],
-      retries: 3,
-      created: (new Date()).toJSON(),
-      deadline: (new Date()).toJSON(),
-      expires: taskcluster.fromNow('1 day'),
-      payload: {nigga:1},
-      tags: {
-        objective: 'Test task indexing',
-      },
-    };
-  };
 
   test('Run task and test indexing', async function() {
     const tq = await helper.load('taskqueue');
