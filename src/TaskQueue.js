@@ -27,17 +27,17 @@ class TaskQueue {
       workerId: this.workerId,
     });
     let stat = '';
-    if (Object.keys(result.tasks.task.payload).length===0) {
-      if (result.tasks.task.workerType === 'succeed') {
-        return await this.queue.reportCompleted(result.tasks.status.taskId, result.tasks.runId);
-      } else if (result.tasks.task.workerType === 'fail') {
-        return await this.queue.reportFailed(result.tasks.status.taskId, result.tasks.runId);
+    if (Object.keys(result.tasks[0].task.payload).length===0) {
+      if (result.tasks[0].task.workerType === 'succeed') {
+        return await this.queue.reportCompleted(result.tasks[0].status.taskId, result.tasks[0].runId);
+      } else if (result.tasks[0].task.workerType === 'fail') {
+        return await this.queue.reportFailed(result.tasks[0].status.taskId, result.tasks[0].runId);
       }
     } else {
       var payload = {
         reason: 'malformed-payload',
       };
-      return await this.queue.reportException(result.tasks.status.taskId, result.tasks.runId, payload);
+      return await this.queue.reportException(result.tasks[0].status.taskId, result.tasks[0].runId, payload);
     }
   }
 }

@@ -13,36 +13,40 @@ helper.secrets.mockSuite('TaskQueue_test.js', ['taskcluster'], function(mock, sk
   test('Run task and test indexing', async function() {
     const tq = await helper.load('taskqueue');
     helper.claimableWork.push({
-      tasks: {
-        status: {
-          taskId:0,
+      tasks: [
+        {
+          status: {
+            taskId: 0,
+          },
+          runId: 0,
+          workerGroup: 'garbage-hybrid1999',
+          workerId: 'succeed',
+          task: {
+            provisionerId: 'garbage-hybrid1999',
+            workerType: 'succeed',
+            payload: {},
+          },
         },
-        runId:0,
-        workerGroup:'garbage-hybrid1999',
-        workerId:'succeed',
-        task: {
-          provisionerId: 'garbage-hybrid1999',
-          workerType:'succeed',
-          payload:{},
-        },
-      },
+      ],
     });
     await tq.claimTasks();
     assert.deepEqual(helper.taskResolutions[0], {completed: true});
     helper.claimableWork.push({
-      tasks: {
-        status: {
-          taskId:1,
+      tasks: [
+        {
+          status: {
+            taskId: 1,
+          },
+          runId: 0,
+          workerGroup: 'garbage-hybrid1999',
+          workerId: 'fail',
+          task: {
+            provisionerId: 'garbage-hybrid1999',
+            workerType: 'fail',
+            payload: {},
+          },
         },
-        runId:0,
-        workerGroup:'garbage-hybrid1999',
-        workerId:'fail',
-        task: {
-          provisionerId: 'garbage-hybrid1999',
-          workerType:'fail',
-          payload:{},
-        },
-      },
+      ],
     });
     await tq.claimTasks();
     assert.deepEqual(helper.taskResolutions[1], {failed: true});
@@ -50,23 +54,46 @@ helper.secrets.mockSuite('TaskQueue_test.js', ['taskcluster'], function(mock, sk
       reason: 'malformed-payload',
     };
     helper.claimableWork.push({
-      tasks: {
-        status: {
-          taskId:2,
-        },
-        runId:0,
-        workerGroup:'garbage-hybrid1999',
-        workerId:'garbage',
-        task: {
-          provisionerId: 'garbage-hybrid1999',
-          workerType:'garbage',
-          payload:{
-            task:'something',
+      tasks: [
+        {
+          status: {
+            taskId: 2,
+          },
+          runId: 0,
+          workerGroup: 'garbage-hybrid1999',
+          workerId: 'succeed',
+          task: {
+            provisionerId: 'garbage-hybrid1999',
+            workerType: 'succeed',
+            payload: {
+              task:'put',
+            },
           },
         },
-      },
+      ],
     });
     await tq.claimTasks();
     assert.deepEqual(helper.taskResolutions[2], {exception: expectedPayload});
+    helper.claimableWork.push({
+      tasks: [
+        {
+          status: {
+            taskId: 3,
+          },
+          runId: 0,
+          workerGroup: 'garbage-hybrid1999',
+          workerId: 'fail',
+          task: {
+            provisionerId: 'garbage-hybrid1999',
+            workerType: 'fail',
+            payload: {
+              task:'put',
+            },
+          },
+        },
+      ],
+    });
+    await tq.claimTasks();
+    assert.deepEqual(helper.taskResolutions[3], {exception: expectedPayload});
   });
 });
