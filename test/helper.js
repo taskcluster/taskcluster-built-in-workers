@@ -67,7 +67,8 @@ const stubbedQueue = () => {
   // {taskId: resolution}
   exports.taskResolutions = {};
   exports.assertTaskResolved = (taskId, resolution) => {
-    return assert.deepEquals(taskResolutions[taskId], resolution);
+    console.log('here');
+    return assert.deepEqual(exports.taskResolutions[taskId], resolution);
   };
   const queue = new taskcluster.Queue({
     rootUrl: helper.rootUrl,
@@ -98,10 +99,6 @@ const stubbedQueue = () => {
       },
     },
   });
-
-  queue.addTask = function(taskId, task) {
-    tasks[taskId] = task;
-  };
 
   return queue;
 };
