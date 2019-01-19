@@ -7,8 +7,8 @@ const assume = require('assume');
 const libUrls = require('taskcluster-lib-urls');
 const Secrets = require('taskcluster-lib-testing');
 
-suite('TaskQueue_test.js', ['taskcluster'], function(mock, skipping) {
-  helper.withFakeQueue(mock, skipping);
+suite('TaskQueue_test.js', function() {
+  helper.withFakeQueue();
 
   test('check succeed worker', async function() {
     const tq = await helper.load('taskqueue');

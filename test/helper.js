@@ -22,12 +22,9 @@ suiteSetup(async function() {
  *
  * The component is available at `helper.queue`.
  */
-exports.withFakeQueue = (mock, skipping) => {
+helper.rootUrl = 'http://localhost:8080';
+exports.withFakeQueue = () => {
   suiteSetup(function() {
-    if (skipping()) {
-      return;
-    }
-
     helper.queue = stubbedQueue();
     helper.load.inject('queue', helper.queue);
   });
