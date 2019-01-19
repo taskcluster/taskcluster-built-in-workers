@@ -3,9 +3,8 @@ const _ = require('lodash');
 const taskcluster = require('taskcluster-client');
 const load = require('../src/main');
 const slugid = require('slugid');
-const worker = require('../src/TaskQueue.js');
-const libUrls = require('taskcluster-lib-urls');
-const {fakeauth, stickyLoader, Secrets} = require('taskcluster-lib-testing');
+const worker = require('../src/TaskQueue');
+const {stickyLoader, Secrets} = require('taskcluster-lib-testing');
 
 const helper = module.exports;
 
@@ -16,21 +15,6 @@ suiteSetup(async function() {
   exports.load.inject('process', 'test');
 });
 
-// set up the testing secrets
-exports.secrets = new Secrets({
-  secretName: 'project/taskcluster/testing/taskcluster-index',
-  secrets: {
-    taskcluster: [
-      {env: 'TASKCLUSTER_ROOT_URL', cfg: 'taskcluster.rootUrl', name: 'rootUrl',
-        mock: libUrls.testRootUrl()},
-      {env: 'TASKCLUSTER_CLIENT_ID', cfg: 'taskcluster.credentials.clientId', name: 'clientId'},
-      {env: 'TASKCLUSTER_ACCESS_TOKEN', cfg: 'taskcluster.credentials.accessToken', name: 'accessToken'},
-    ],
-  },
-  load: exports.load,
-});
-
-helper.rootUrl = 'http://localhost:60020';
 /**
  * Set up a fake tc-queue object that supports only the `task` method,
  * and inject that into the loader.  This is injected regardless of
@@ -49,15 +33,32 @@ exports.withFakeQueue = (mock, skipping) => {
   });
 };
 
-exports.withWorker = (mock, skipping) => {
-  suiteSetup(function() {
-    if (skipping()) {
-      return;
-    }
-    helper.worker = new worker.TaskQueue();
-    helper.load.inject('worker', helper.worker);
-  });
+exports.withmakeClaimableWork = (payload) => {
+  helper.makeClaimableWork = makeClaimableWork(payload);  
+  helper.load.inject('makeClaimableWork', helper.makeClaimableWork);
 };
+
+const makeClaimableWork = (payload) => {
+  const exampleresult = {
+    tasks: [
+      {
+        status: {
+          taskId: 0,
+        },
+        runId: 0,
+        workerGroup: 'garbage-hybrid1999',
+        workerId: 'succeed',
+        task: {
+          provisionerId: 'garbage-hybrid1999',
+          workerType: 'succeed',
+          payload: {payload},
+        },
+      },
+    ],
+  };
+  return exampleresult;
+};
+
 /**
  * make a queue object with the `task` method stubbed out, and with
  * an `addTask` method to add fake tasks.
@@ -68,6 +69,9 @@ const stubbedQueue = () => {
   exports.claimableWork = [];
   // {taskId: resolution}
   exports.taskResolutions = {};
+  exports.assertTaskResolved = (taskId, resolution) => {
+    return assert.deepEquals(taskResolutions[taskId], resolution);
+  };
   const queue = new taskcluster.Queue({
     rootUrl: helper.rootUrl,
     credentials:      {
