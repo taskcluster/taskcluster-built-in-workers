@@ -1,4 +1,3 @@
-const assert = require('assert');
 const debug = require('debug')('index:test:api_test');
 const helper = require('./helper');
 const slugid = require('slugid');
@@ -6,17 +5,19 @@ const taskcluster = require('taskcluster-client');
 const request = require('superagent');
 const assume = require('assume');
 const libUrls = require('taskcluster-lib-urls');
+const Secrets = require('taskcluster-lib-testing');
 
-helper.secrets.mockSuite('TaskQueue_test.js', ['taskcluster'], function(mock, skipping) {
-  helper.withFakeQueue(mock, skipping);
+suite('TaskQueue_test.js', function() {
+  helper.withFakeQueue();
 
-  test('Run task and test indexing', async function() {
-    const tq = await helper.load('taskqueue');
+  test('check succeed worker', async function() {
+    const tq = await helper.load('succeedTaskQueue');
+    var taskId = slugid.nice();
     helper.claimableWork.push({
       tasks: [
         {
           status: {
-            taskId: 0,
+            taskId: taskId,
           },
           runId: 0,
           workerGroup: 'garbage-hybrid1999',
@@ -29,13 +30,17 @@ helper.secrets.mockSuite('TaskQueue_test.js', ['taskcluster'], function(mock, sk
         },
       ],
     });
-    await tq.claimTasks();
-    assert.deepEqual(helper.taskResolutions[0], {completed: true});
+    await tq.claimTask();
+    helper.assertTaskResolved(taskId, {completed: true});
+  });
+  taskId = slugid.nice();
+  test('Check Fail worker', async function() {
+    const tq = await helper.load('failTaskQueue');
     helper.claimableWork.push({
       tasks: [
         {
           status: {
-            taskId: 1,
+            taskId: taskId,
           },
           runId: 0,
           workerGroup: 'garbage-hybrid1999',
@@ -48,37 +53,45 @@ helper.secrets.mockSuite('TaskQueue_test.js', ['taskcluster'], function(mock, sk
         },
       ],
     });
-    await tq.claimTasks();
-    assert.deepEqual(helper.taskResolutions[1], {failed: true});
+    await tq.claimTask();
+    helper.assertTaskResolved(taskId, {failed: true});
+  });
+  test('Check non empty payloadd for succeed', async function() {
+    const tq = await helper.load('succeedTaskQueue');
+    taskId = slugid.nice();
+    helper.claimableWork.push({
+      tasks: [
+        {
+          status: {
+            taskId: taskId,
+          },
+          runId: 0,
+          workerGroup: 'garbage-hybrid1999',
+          workerId: 'succeed',
+          task: {
+            provisionerId: 'garbage-hybrid1999',
+            workerType: 'succeed',
+            payload: {
+              task:'put',
+            },
+          },
+        },
+      ],
+    });
+    await tq.claimTask();
     expectedPayload = {
       reason: 'malformed-payload',
     };
+    helper.assertTaskResolved(taskId, {exception: expectedPayload});
+  });
+  test('Check non empty payload for fail', async function() {
+    const tq = await helper.load('failTaskQueue');
+    taskId = slugid.nice();
     helper.claimableWork.push({
       tasks: [
         {
           status: {
-            taskId: 2,
-          },
-          runId: 0,
-          workerGroup: 'garbage-hybrid1999',
-          workerId: 'succeed',
-          task: {
-            provisionerId: 'garbage-hybrid1999',
-            workerType: 'succeed',
-            payload: {
-              task:'put',
-            },
-          },
-        },
-      ],
-    });
-    await tq.claimTasks();
-    assert.deepEqual(helper.taskResolutions[2], {exception: expectedPayload});
-    helper.claimableWork.push({
-      tasks: [
-        {
-          status: {
-            taskId: 3,
+            taskId: taskId,
           },
           runId: 0,
           workerGroup: 'garbage-hybrid1999',
@@ -93,7 +106,7 @@ helper.secrets.mockSuite('TaskQueue_test.js', ['taskcluster'], function(mock, sk
         },
       ],
     });
-    await tq.claimTasks();
-    assert.deepEqual(helper.taskResolutions[3], {exception: expectedPayload});
+    await tq.claimTask();
+    helper.assertTaskResolved(taskId, {exception: expectedPayload});
   });
 });

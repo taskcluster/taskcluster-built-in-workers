@@ -46,9 +46,23 @@ const load = loader({
     setup: ({docs}) => docs.write({docsDir: process.env['DOCS_OUTPUT_DIR']}),
   },
 
-  taskqueue:{
-    requires: ['cfg', 'queue'],
-    setup: ({cfg, queue}) => new taskqueue.TaskQueue(cfg, queue),
+  succeedTaskQueue:{
+    requires: ['queue'],
+    setup: ({queue}) => new taskqueue.TaskQueue(queue, 'succeed'),
+  },
+
+  failTaskQueue:{
+    requires: ['queue'],
+    setup: ({queue}) => new taskqueue.TaskQueue(queue, 'fail'),
+  },
+  server:{
+    requires:['succeedTaskQueue', 'failTaskQueue'],
+    setup: ({failTaskQueue, succeedTaskQueue}) => async function() {
+      await Promise.all([
+        this.succeedTaskQueue.runWorker(),
+        this.failTaskQueue.runWorker(),
+      ]);
+    },
   },
 }, ['process', 'profile']);
 
