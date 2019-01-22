@@ -41,7 +41,6 @@ const stubbedQueue = () => {
   // {taskId: resolution}
   exports.taskResolutions = {};
   exports.assertTaskResolved = (taskId, resolution) => {
-    console.log('here');
     return assert.deepEqual(exports.taskResolutions[taskId], resolution);
   };
   const queue = new taskcluster.Queue({
