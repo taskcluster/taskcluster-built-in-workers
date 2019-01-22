@@ -47,13 +47,13 @@ const load = loader({
   },
 
   succeedTaskQueue:{
-    requires: ['queue'],
-    setup: ({queue}) => new taskqueue.TaskQueue(queue, 'succeed'),
+    requires: ['queue', 'cfg'],
+    setup: ({cfg, queue}) => new taskqueue.TaskQueue(cfg, queue, 'succeed'),
   },
 
   failTaskQueue:{
-    requires: ['queue'],
-    setup: ({queue}) => new taskqueue.TaskQueue(queue, 'fail'),
+    requires: ['queue', 'cfg'],
+    setup: ({cfg, queue}) => new taskqueue.TaskQueue(cfg, queue, 'fail'),
   },
   server:{
     requires:['succeedTaskQueue', 'failTaskQueue'],
