@@ -30,32 +30,6 @@ exports.withFakeQueue = () => {
   });
 };
 
-exports.withmakeClaimableWork = (payload) => {
-  helper.makeClaimableWork = makeClaimableWork(payload);  
-  helper.load.inject('makeClaimableWork', helper.makeClaimableWork);
-};
-
-const makeClaimableWork = (payload) => {
-  const exampleresult = {
-    tasks: [
-      {
-        status: {
-          taskId: 0,
-        },
-        runId: 0,
-        workerGroup: 'garbage-hybrid1999',
-        workerId: 'succeed',
-        task: {
-          provisionerId: 'garbage-hybrid1999',
-          workerType: 'succeed',
-          payload: {payload},
-        },
-      },
-    ],
-  };
-  return exampleresult;
-};
-
 /**
  * make a queue object with the `task` method stubbed out, and with
  * an `addTask` method to add fake tasks.
