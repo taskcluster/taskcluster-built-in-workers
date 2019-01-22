@@ -12,7 +12,7 @@ suite('TaskQueue_test.js', function() {
 
   test('check succeed worker', async function() {
     const tq = await helper.load('succeedTaskQueue');
-    var taskId = slugid.nice();
+    const taskId = slugid.nice();
     helper.claimableWork.push({
       tasks: [
         {
@@ -33,9 +33,10 @@ suite('TaskQueue_test.js', function() {
     await tq.claimTask();
     helper.assertTaskResolved(taskId, {completed: true});
   });
-  taskId = slugid.nice();
+
   test('Check Fail worker', async function() {
     const tq = await helper.load('failTaskQueue');
+    const taskId = slugid.nice();
     helper.claimableWork.push({
       tasks: [
         {
@@ -56,9 +57,10 @@ suite('TaskQueue_test.js', function() {
     await tq.claimTask();
     helper.assertTaskResolved(taskId, {failed: true});
   });
+
   test('Check non empty payloadd for succeed', async function() {
     const tq = await helper.load('succeedTaskQueue');
-    taskId = slugid.nice();
+    const taskId = slugid.nice();
     helper.claimableWork.push({
       tasks: [
         {
@@ -84,9 +86,10 @@ suite('TaskQueue_test.js', function() {
     };
     helper.assertTaskResolved(taskId, {exception: expectedPayload});
   });
+
   test('Check non empty payload for fail', async function() {
     const tq = await helper.load('failTaskQueue');
-    taskId = slugid.nice();
+    const taskId = slugid.nice();
     helper.claimableWork.push({
       tasks: [
         {
