@@ -5,7 +5,6 @@ defaults:
   # TaskCluster credentials
   taskcluster:
     rootUrl: !env TASKCLUSTER_ROOT_URL
-    queue: none
     credentials:
       clientId: !env TASKCLUSTER_CLIENT_ID
       accessToken: !env TASKCLUSTER_ACCESS_TOKEN
