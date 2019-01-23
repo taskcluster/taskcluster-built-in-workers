@@ -29,7 +29,7 @@ class TaskQueue {
     if (Object.keys(task.task.payload).length===0) {
       if (task.task.workerType === 'succeed') {
         return await this.queue.reportCompleted(task.status.taskId, task.runId);
-      } else if (result.tasks[0].task.workerType === 'fail') {
+      } else if (task.task.workerType === 'fail') {
         return await this.queue.reportFailed(task.status.taskId, task.runId);
       }
     } else {
