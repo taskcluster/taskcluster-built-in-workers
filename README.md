@@ -1,7 +1,3 @@
-# TaskCluster Built-In Workers
+# Moved to Monorepo
 
-..
-
-# Service Owner
-
-Service Owner: dustin@mozilla.com
+This project has been moved into the Taskcluster "monorepo" at https://github.com/taskcluster/taskcluster.
